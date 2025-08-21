@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel de Dispositivos</title>
+    <style>
+        .ok { color: green; font-weight: bold; }
+        .alerta { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Panel de Monitoreo Energético</h1>
+    <table border="1" cellpadding="8">
+        <tr>
+            <th>Dispositivo</th>
+            <th>Consumo Actual (W)</th>
+            <th>Límite (W)</th>
+            <th>Estado</th>
+        </tr>
+        {% for d in dispositivos %}
+        <tr>
+            <td>{{ d.nombre }}</td>
+            <td>{{ d.consumo }}</td>
+            <td>{{ d.limite }}</td>
+            <td>
+                {% if d.consumo <= d.limite %}
+                    <span class="ok">Dentro del límite</span>
+                {% else %}
+                    <span class="alerta">Excede el límite</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
