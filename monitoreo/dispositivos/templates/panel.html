@@ -5,19 +5,32 @@
     <meta charset="UTF-8">
     <title>Panel de Dispositivos</title>
     <style>
+        h1 {
+            color: #000000;
+        }
+
         table {
             width: 80%;
             border-collapse: collapse;
             margin: 20px auto;
         }
         th, td {
-            border: 1px solid #444;
+            border: 1px solid #444444;
             padding: 8px 12px;
             text-align: center;
         }
         th {
-            background-color: #eee;
+            background-color: #66c2ff;
         }
+
+        #rcorners2 {
+            border-radius: 25px;
+            border: 2px solid #313fff;
+            padding: 20px; 
+            width: 200px;
+            height: 150px;  
+        }
+        
         .excede {
             color: red;
             font-weight: bold;
@@ -44,7 +57,7 @@
                 <td>
                     {{ dispositivo.consumo }}
                     {% if dispositivo.consumo > 100 %}
-                        <span class="excede"> Excede </span>
+                        <span class="excede"> ( Excede ) </span>
                     {% endif %}
                 </td>
                 <td>{{ dispositivo.categoria.nombre }}</td>

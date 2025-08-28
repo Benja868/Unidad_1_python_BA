@@ -27,8 +27,7 @@ class Dispositivo(models.Model):
     
     @property
     def exceso(self):
-        # Marca True si el consumo supera 100 W
-        return self.consumo > 100
+        return self.consumo > 100 #Marca en exceso si sobre pasa los 100w
     
 class Medicion(models.Model):
     dispositivo = models.ForeignKey(Dispositivo, on_delete=models.CASCADE)
