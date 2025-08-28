@@ -71,5 +71,25 @@
             {% endfor %}
         </tbody>
     </table>
+    <div>
+        <ul>
+            {% for d in dispositivos %}
+                <li>{{ d.nombre }} - {{ d.categoria }}  {{ d.categoria.estado }} </li>
+                {% empty %}
+                <li>No hay dispositivos.</li>
+                {% endfor %}
+        </ul>
+    </div>
+    <div>
+        <ul>
+            {% for d in dispositivos %}
+            <li>{{ d.nombre }} - {{ d.categoria }}  {{ d.categoria.estado }}
+                ir a <a href="{% url 'dispositivo' d.id %}">Detalle</a>
+            </li>
+            {% empty %}
+            <li>No hay dispositivos.</li>
+        {% endfor %}
+    </ul>
+    </div>
 </body>
 </html>
