@@ -1,0 +1,30 @@
+{% extends "devices/base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Listado Global de Mediciones</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Dispositivo</th>
+                <th>Consumo</th>
+                <th>Fecha</th>
+                <th>Zona</th>
+                <th>Categoría</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for m in measurements %}
+            <tr>
+                <td>{{ m.device.name }}</td>
+                <td>{{ m.consumption }}</td>
+                <td>{{ m.timestamp }}</td>
+                <td>{{ m.device.zone.name }}</td>
+                <td>{{ m.device.category.name }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5">No hay mediciones</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

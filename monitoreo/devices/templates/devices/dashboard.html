@@ -1,0 +1,44 @@
+{% extends "devices/base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Dashboard</h2>
+
+    <h4>Últimas 10 mediciones</h4>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Dispositivo</th>
+                <th>Consumo</th>
+                <th>Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for m in latest_measurements %}
+            <tr>
+                <td>{{ m.device.name }}</td>
+                <td>{{ m.consumption }}</td>
+                <td>{{ m.timestamp }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="3">No hay mediciones disponibles</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h4>Zonas y dispositivos</h4>
+    <ul>
+        {% for z in zones %}
+        <li>{{ z.name }} - {{ z.device_count }} dispositivos</li>
+        {% empty %}
+        <li>No hay zonas registradas</li>
+        {% endfor %}
+    </ul>
+
+    <h4>Alertas de la semana</h4>
+    <ul>
+        <li>Grave: {{ alerts_summary.Grave }}</li>
+        <li>Alta: {{ alerts_summary.Alta }}</li>
+        <li>Media: {{ alerts_summary.Media }}</li>
+    </ul>
+</div>
+{% endblock %}

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles del Dispositivo</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f7fb;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .card {
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #4a90e2;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        p {
+            font-size: 1rem;
+            margin: 8px 0;
+            color: #555;
+        }
+
+        strong {
+            color: #333;
+        }
+
+        .button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 25px;
+            background-color: #4a90e2;
+            color: #fff;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        .button:hover {
+            background-color: #357abd;
+            transform: scale(1.05);
+        }
+
+        .button:active {
+            transform: scale(0.98);
+        }
+
+        .not-found {
+            text-align: center;
+            color: #e63946;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Detalles del Dispositivo</h1>
+        
+        {% if device %}
+            <h2>{{ device.name }}</h2>
+            <p><strong>Categoría:</strong> {{ device.category.name }}</p>
+            <p><strong>Descripción:</strong> {{device.description }}</p>
+            <p><strong>Consumo:</strong> {{ device.consumption }}</p>
+            <p><strong>Estado:</strong> {{ device.estado|yesno:"Encendido,Apagado" }}</p>
+            <p><strong>Zona:</strong> {{device.zone }}</p>
+            <p><strong>Fecha de creación:</strong> {{ device.creation_date }}</p>
+            
+            <a href="{% url 'panel' %}" class="button">⬅ Volver al Panel</a>
+        {% else %}
+            <p class="not-found">⚠ Dispositivo no encontrado.</p>
+            <a href="{% url 'panel' %}" class="button">⬅ Volver al Panel</a>
+        {% endif %}
+    </div>
+</body>
+</html>

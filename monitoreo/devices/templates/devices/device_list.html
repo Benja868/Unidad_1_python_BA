@@ -1,0 +1,41 @@
+{% extends "devices/base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Listado de Dispositivos</h2>
+    <form method="get">
+        <select name="category" onchange="this.form.submit()">
+            <option value="">-- Todas las categorías --</option>
+            {% for c in categories %}
+            <option value="{{ c.id }}" {% if c.id|stringformat:"s" == request.GET.category %}selected{% endif %}>{{ c.name }}</option>
+            {% endfor %}
+        </select>
+    </form>
+
+    <table class="table table-striped mt-2">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Consumo</th>
+                <th>Categoría</th>
+                <th>Zona</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in devices %}
+            <tr>
+                <td>{{ d.name }}</td>
+                <td>{{ d.consumption }}</td>
+                <td>{{ d.category.name }}</td>
+                <td>{{ d.zone.name }}</td>
+                <td>{{ d.status|yesno:"Encendido,Apagado" }}</td>
+                <td><a href="{% url 'device_detail' d.id %}">Ver Detalle</a></td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6">No hay dispositivos</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

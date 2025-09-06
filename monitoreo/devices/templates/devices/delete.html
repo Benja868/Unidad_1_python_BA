@@ -1,0 +1,12 @@
+{% extends "devices/base.html" %}
+
+{% block content %}
+<h2>Eliminar Dispositivo</h2>
+<p>¿Seguro que quieres eliminar el dispositivo: <strong>{{ device.name }}</strong>?</p>
+
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+    <a href="{% url 'panel' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}
