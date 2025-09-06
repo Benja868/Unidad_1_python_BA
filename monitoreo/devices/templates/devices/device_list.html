@@ -1,9 +1,13 @@
 {% extends "devices/base.html" %}
 {% block content %}
 <div class="container mt-4">
-    <h2>Listado de Dispositivos</h2>
-    <form method="get">
-        <select name="category" onchange="this.form.submit()">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Listado de Dispositivos</h2>
+        <a href="{% url 'create_device' %}" class="btn btn-success">Agregar Dispositivo</a>
+    </div>
+
+    <form method="get" class="mb-3">
+        <select name="category" onchange="this.form.submit()" class="form-select w-auto d-inline">
             <option value="">-- Todas las categorías --</option>
             {% for c in categories %}
             <option value="{{ c.id }}" {% if c.id|stringformat:"s" == request.GET.category %}selected{% endif %}>{{ c.name }}</option>
@@ -30,7 +34,14 @@
                 <td>{{ d.category.name }}</td>
                 <td>{{ d.zone.name }}</td>
                 <td>{{ d.status|yesno:"Encendido,Apagado" }}</td>
-                <td><a href="{% url 'device_detail' d.id %}">Ver Detalle</a></td>
+                <td>
+                    <a href="{% url 'device_detail' d.id %}" class="btn btn-sm btn-info">Ver</a>
+                    <a href="{% url 'edit_device' d.id %}" class="btn btn-sm btn-warning">Editar</a>
+                    <form action="{% url 'delete_device' d.id %}" method="POST" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                    </form>
+                </td>
             </tr>
             {% empty %}
             <tr><td colspan="6">No hay dispositivos</td></tr>
