@@ -1,0 +1,13 @@
+{% extends "devices/base.html" %}
+
+{% block content %}
+<div class="text-center" style="margin-top: 50px;">
+    <h1 class="mb-4">Sistema de Monitoreo</h1>
+
+    <div class="d-flex flex-column align-items-center gap-3">
+        <a href="{% url 'panel' %}" class="btn btn-primary btn-lg w-50">Panel de Dispositivos</a>
+        <a href="{% url 'create_device' %}" class="btn btn-success btn-lg w-50">Crear Dispositivos</a>
+        <a href="http://127.0.0.1:8000/admin/login/?next=/admin/" class="btn btn-secondary btn-lg w-50">Login Admin</a>
+    </div>
+</div>
+{% endblock %}

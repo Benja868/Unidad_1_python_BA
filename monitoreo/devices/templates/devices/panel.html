@@ -1,0 +1,147 @@
+<!-- panel.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel de Dispositivos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fb;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin: 20px 0;
+            font-size: 2rem;
+        }
+
+        h2 {
+            color: #4a90e2;
+            text-align: center;
+            margin: 40px 0 10px 0;
+            font-size: 1.5rem;
+        }
+
+        table {
+            width: 85%;
+            border-collapse: collapse;
+            margin: 20px auto;
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #4a90e2;
+            color: #fff;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #eaf3ff;
+        }
+
+        .excede {
+            color: #e63946;
+            font-weight: bold;
+        }
+
+        a {
+            text-decoration: none;
+            color: #4a90e2;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .btn-index {
+            display: block;
+            width: 200px;
+            margin: 30px auto;
+            padding: 12px 0;
+            background-color: #04AA6D;
+            color: white;
+            text-align: center;
+            font-weight: bold;
+            border-radius: 8px;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        .btn-index:hover {
+            background-color: #037d50;
+            transform: scale(1.05);
+        }
+
+        .btn-index:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+    <h1>Panel de Dispositivos</h1>
+    <div>
+        <a href="{% url 'index' %}" class="btn-index">⬅ Volver al Inicio</a>
+    </div>
+
+    <!-- Tabla 1 -->
+    <h2>Listado Completo</h2>
+    <table>
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Consumo (W)</th>
+            <th>Categoría</th>
+            <th>Zona</th>
+            <th>Estado</th>
+            <th>Fecha de creación</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for device in devices %}
+        <tr>
+            <td>{{ device.name }}</td>
+            <td>{{ device.description }}</td>
+            <td>
+                {{ device.consumption }}
+                {% if device.consumption > 100 %}
+                    <span class="excede"> (Excede)</span>
+                {% endif %}
+            </td>
+            <td>{{ device.category.name }}</td>
+            <td>{{ device.zone.name }}</td>
+            <td>{{ device.status|yesno:"Encendido,Apagado" }}</td>
+            <td>{{ device.creation_date }}</td>
+            <td>
+                <a href="{% url 'edit_device' device.id %}">Editar</a> |
+                <a href="{% url 'delete_device' device.id %}">Eliminar</a> |
+                <a href="{% url 'device' device.id %}">Ver detalle</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="8">No hay dispositivos registrados</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</body>
+</html>

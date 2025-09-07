@@ -16,7 +16,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'dispositivos',  # ✅ Agregada tu app
+    'devices', #Agregada tu app (dispositivos).
 ]
 
 MIDDLEWARE = [
@@ -34,7 +34,7 @@ ROOT_URLCONF = 'monitoreo.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # ✅ Carpeta de templates de tu app
+        #Carpeta de templates de tu app
         'DIRS': [BASE_DIR / "dispositivos" / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {

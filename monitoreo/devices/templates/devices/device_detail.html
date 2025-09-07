@@ -1,0 +1,32 @@
+{% extends "devices/base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Detalle del Dispositivo: {{ device.name }}</h2>
+    <p><strong>Descripción:</strong> {{ device.description }}</p>
+    <p><strong>Consumo:</strong> {{ device.consumption }}</p>
+    <p><strong>Estado:</strong> {{ device.status|yesno:"Encendido,Apagado" }}</p>
+    <p><strong>Categoría:</strong> {{ device.category.name }}</p>
+    <p><strong>Zona:</strong> {{ device.zone.name }}</p>
+    <p><strong>Creación:</strong> {{ device.creation_date }}</p>
+
+    <h4>Mediciones</h4>
+    <table class="table table-striped">
+        <tr><th>Fecha</th><th>Consumo</th></tr>
+        {% for m in measurements %}
+        <tr><td>{{ m.timestamp }}</td><td>{{ m.consumption }}</td></tr>
+        {% empty %}
+        <tr><td colspan="2">No hay mediciones</td></tr>
+        {% endfor %}
+    </table>
+
+    <h4>Alertas</h4>
+    <table class="table table-striped">
+        <tr><th>Fecha</th><th>Mensaje</th><th>Severidad</th></tr>
+        {% for a in alerts %}
+        <tr><td>{{ a.timestamp }}</td><td>{{ a.message }}</td><td>{{ a.severity }}</td></tr>
+        {% empty %}
+        <tr><td colspan="3">No hay alertas</td></tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
