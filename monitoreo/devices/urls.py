@@ -11,4 +11,8 @@ urlpatterns = [
 
     # Mediciones
     path("measurements/", views.measurement_list, name="measurement_list"),
+    # Categorías y Zonas
+    path("categories/create/", views.create_category, name="create_category"),
+    path("zones/create/", views.create_zone, name="create_zone"),
+
 ]

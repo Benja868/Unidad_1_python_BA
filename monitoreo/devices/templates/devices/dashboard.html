@@ -1,44 +1,117 @@
 {% extends "devices/base.html" %}
 {% block content %}
 <div class="container mt-4">
-    <h2>Dashboard</h2>
+    <h2 class="mb-4">Dashboard</h2>
 
-    <h4>Últimas 10 mediciones</h4>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Dispositivo</th>
-                <th>Consumo</th>
-                <th>Fecha</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for m in latest_measurements %}
-            <tr>
-                <td>{{ m.device.name }}</td>
-                <td>{{ m.consumption }}</td>
-                <td>{{ m.timestamp }}</td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="3">No hay mediciones disponibles</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <!-- KPIs -->
+    <div class="row text-center mb-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h6 class="text-muted">Consumo Total</h6>
+                    <h3 class="text-primary">{{ total_consumption }} kWh</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h6 class="text-muted">Zonas</h6>
+                    <h3>{{ zones|length }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h6 class="text-muted">Alertas Graves</h6>
+                    <h3 class="text-danger">{{ alerts_summary.Grave }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h6 class="text-muted">Alertas Altas</h6>
+                    <h3 class="text-warning">{{ alerts_summary.Alta }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h6 class="text-muted">Alertas Medias</h6>
+                    <h3 class="text-info">{{ alerts_summary.Media }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <h4>Zonas y dispositivos</h4>
-    <ul>
-        {% for z in zones %}
-        <li>{{ z.name }} - {{ z.device_count }} dispositivos</li>
-        {% empty %}
-        <li>No hay zonas registradas</li>
-        {% endfor %}
-    </ul>
+    <!-- Filtros de búsqueda y orden -->
+    <div class="card shadow mb-4">
+        <div class="card-header bg-dark text-white">
+            Últimas mediciones
+        </div>
+        <div class="card-body">
+            <form method="get" class="row mb-3">
+                <div class="col-md-6">
+                    <input type="text" name="search" class="form-control"
+                           placeholder="Buscar por dispositivo"
+                           value="{{ search_query }}">
+                </div>
+                <div class="col-md-4">
+                    <select name="order" class="form-select" onchange="this.form.submit()">
+                        <option value="-timestamp" {% if order == "-timestamp" %}selected{% endif %}>Fecha ↓</option>
+                        <option value="timestamp" {% if order == "timestamp" %}selected{% endif %}>Fecha ↑</option>
+                        <option value="-value" {% if order == "-value" %}selected{% endif %}>Consumo ↓</option>
+                        <option value="value" {% if order == "value" %}selected{% endif %}>Consumo ↑</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Aplicar</button>
+                </div>
+            </form>
 
-    <h4>Alertas de la semana</h4>
-    <ul>
-        <li>Grave: {{ alerts_summary.Grave }}</li>
-        <li>Alta: {{ alerts_summary.Alta }}</li>
-        <li>Media: {{ alerts_summary.Media }}</li>
-    </ul>
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Dispositivo</th>
+                        <th>Valor</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for m in latest_measurements %}
+                    <tr>
+                        <td>{{ m.device.name }}</td>
+                        <td>{{ m.value }}</td>
+                        <td>{{ m.timestamp|date:"d/m/Y H:i" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="3" class="text-center text-muted">No hay mediciones</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Zonas -->
+    <div class="card shadow">
+        <div class="card-header bg-secondary text-white">
+            Zonas y cantidad de dispositivos
+        </div>
+        <div class="card-body">
+            <ul class="list-group">
+                {% for z in zones %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ z.name }}
+                    <span class="badge bg-primary rounded-pill">{{ z.device_count }}</span>
+                </li>
+                {% empty %}
+                <li class="list-group-item text-muted">No hay zonas registradas</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 </div>
 {% endblock %}

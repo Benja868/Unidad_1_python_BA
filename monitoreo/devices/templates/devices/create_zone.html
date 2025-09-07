@@ -1,0 +1,15 @@
+{% extends "devices/base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Nueva Zona</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <input type="text" name="name" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-success">Guardar</button>
+        <a href="{% url 'create_device' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

@@ -2,9 +2,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.utils import timezone
-from django.db.models import Count
+from django.db.models import Count, Sum   # 👈 agregado Sum
+from django.contrib.auth.decorators import login_required
 from datetime import timedelta
 from .models import Measurement, Zone, Device, Alert, Category, UserProfile
+from .models import Category, Zone
 
 
 # Página de inicio
@@ -13,11 +15,11 @@ def index(request):
 
 
 # CREAR DISPOSITIVO
+@login_required(login_url='login')
 def create_device(request):
     user_profile = request.user.userprofile
     organization = user_profile.organization
 
-    # Filtramos categorías y zonas por la organización del usuario
     categories = Category.objects.filter(organization=organization)
     zones = Zone.objects.filter(organization=organization)
 
@@ -29,7 +31,6 @@ def create_device(request):
         zone_id = request.POST.get("zone")
         status = request.POST.get("status") == "on"
 
-        # Manejo seguro de objetos relacionados
         try:
             category = Category.objects.get(id=category_id) if category_id else None
         except Category.DoesNotExist:
@@ -40,7 +41,6 @@ def create_device(request):
         except Zone.DoesNotExist:
             zone = None
 
-        # Creamos el dispositivo asociado a la organización del usuario
         Device.objects.create(
             name=name,
             description=description,
@@ -57,13 +57,14 @@ def create_device(request):
         "zones": zones
     })
 
+
 # EDITAR DISPOSITIVO
+@login_required(login_url='login')
 def edit_device(request, device_id):
     device = get_object_or_404(Device, pk=device_id)
     user_profile = request.user.userprofile
     organization = user_profile.organization
 
-    # Filtrar categorías y zonas por la organización del usuario
     categories = Category.objects.filter(organization=organization)
     zones = Zone.objects.filter(organization=organization)
 
@@ -133,25 +134,53 @@ def recover_password(request):
 
 
 # DASHBOARD
+@login_required(login_url='login')
 def dashboard(request):
-    latest_measurements = Measurement.objects.order_by("-timestamp")[:10]
     user_org = request.user.userprofile.organization
+
+    # 🔍 búsqueda por nombre de dispositivo
+    search_query = request.GET.get("search", "")
+
+    # 📊 mediciones filtradas por organización
+    measurements = Measurement.objects.filter(device__organization=user_org)
+
+    if search_query:
+        measurements = measurements.filter(device__name__icontains=search_query)
+
+    # 📑 ordenamiento (por defecto fecha descendente)
+    order = request.GET.get("order", "-timestamp")
+    measurements = measurements.order_by(order)[:10]
+
+    # zonas con conteo de dispositivos
     zones = Zone.objects.filter(organization=user_org).annotate(device_count=Count("device"))
+
+    # alertas de la última semana
     last_week = timezone.now() - timedelta(days=7)
     alerts = Alert.objects.filter(timestamp__gte=last_week, device__organization=user_org)
+
+    # consumo total de la organización
+    total_consumption = Measurement.objects.filter(
+        device__organization=user_org
+    ).aggregate(total=Sum("value"))["total"] or 0
+
     alerts_summary = {
         "Grave": alerts.filter(severity="Grave").count(),
         "Alta": alerts.filter(severity="Alta").count(),
         "Media": alerts.filter(severity="Media").count(),
     }
+
     return render(request, "devices/dashboard.html", {
-        "latest_measurements": latest_measurements,
+        "latest_measurements": measurements,
         "zones": zones,
         "alerts_summary": alerts_summary,
+        "total_consumption": total_consumption,
+        "search_query": search_query,
+        "order": order,
     })
 
 
 # LISTA DE DISPOSITIVOS
+@login_required(login_url='login')
 def device_list(request):
     user_org = request.user.userprofile.organization
     category_id = request.GET.get("category")
@@ -163,6 +192,7 @@ def device_list(request):
 
 
 # DETALLE DE DISPOSITIVO
+@login_required(login_url='login')
 def device_detail(request, device_id):
     device = get_object_or_404(Device, pk=device_id)
     measurements = Measurement.objects.filter(device=device).order_by("-timestamp")
@@ -175,6 +205,7 @@ def device_detail(request, device_id):
 
 
 # ELIMINAR DISPOSITIVO
+@login_required(login_url='login')
 def delete_device(request, device_id):
     device = get_object_or_404(Device, pk=device_id)
     if request.method == "POST":
@@ -184,6 +215,28 @@ def delete_device(request, device_id):
 
 
 # LISTA DE MEDICIONES
+@login_required(login_url='login')
 def measurement_list(request):
-    measurements = Measurement.objects.all().order_by("-timestamp")
+    user_org = request.user.userprofile.organization
+    measurements = Measurement.objects.filter(device__organization=user_org).order_by("-timestamp")
     return render(request, "devices/measurement_list.html", {"measurements": measurements})
+
+@login_required(login_url='login')
+def create_category(request):
+    user_org = request.user.userprofile.organization
+    if request.method == "POST":
+        name = request.POST.get("name")
+        if name:
+            Category.objects.create(name=name, organization=user_org)
+            return redirect("create_device")  # vuelve a crear dispositivo
+    return render(request, "devices/create_category.html")
+
+@login_required(login_url='login')
+def create_zone(request):
+    user_org = request.user.userprofile.organization
+    if request.method == "POST":
+        name = request.POST.get("name")
+        if name:
+            Zone.objects.create(name=name, organization=user_org)
+            return redirect("create_device")  # vuelve a crear dispositivo
+    return render(request, "devices/create_zone.html")
